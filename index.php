@@ -89,9 +89,9 @@ $app->post('/login', function() use ($app) {
 // Get all available rides
 $app->get('/rides/getall', function () {
 
-    $db = new $DbHandler();
+    $db = new DbHandler();
     $rides = $db->getAllRides();
-    echo "here";
+
     $rides_output = array();
 
     for($i = 0; $i < sizeof($rides); $i++) {
