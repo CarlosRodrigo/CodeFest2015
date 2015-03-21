@@ -97,6 +97,7 @@ $app->post('/login', function() use ($app) {
             $response['first_name'] = $user['user_firstname'];
             $response['last_name'] = $user['user_lastname'];
             $response['email'] = $user['user_email'];
+            $response['userId'] = $user['user_id'];
         } else {
             // unknown error occurred
             $response['error'] = true;
@@ -106,6 +107,25 @@ $app->post('/login', function() use ($app) {
         // user credentials are wrong
         $response['error'] = true;
         $response['message'] = 'Login failed. Incorrect credentials';
+    }
+
+    echoRespnse("200", $response);
+});
+
+$app->get('/profile/:id', function($id) {
+
+    // reading post params
+    $response = array();
+    $db = new DbHandler();
+    
+    // get the user by email
+    $user = $db->getUserById($id);
+
+    if ($user != null) {
+        $response["error"] = false;
+        $response['first_name'] = $user['user_firstname'];
+        $response['last_name'] = $user['user_lastname'];
+        $response['email'] = $user['user_email'];
     }
 
     echoRespnse("200", $response);

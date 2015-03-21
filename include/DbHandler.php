@@ -47,8 +47,20 @@ class DbHandler {
     }
 
     public function getUserByEmail($email) {
-        $sql = "SELECT user_firstname, user_lastname, user_email FROM users WHERE user_email = ?";
+        $sql = "SELECT user_firstname, user_lastname, user_email, user_id FROM users WHERE user_email = ?";
         $result = $this->conn->select($sql, array($email));
+        
+        if ($result != null) {
+            $user = $result[0];
+            return $user;
+        } else {
+            return null;
+        }
+    }
+
+    public function getUserById($id) {
+        $sql = "SELECT user_firstname, user_lastname, user_email FROM users WHERE user_id = ?";
+        $result = $this->conn->select($sql, array($id));
         
         if ($result != null) {
             $user = $result[0];
