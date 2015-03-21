@@ -85,6 +85,31 @@ $app->post('/login', function() use ($app) {
     echoRespnse("200", $response);
 });
 
+
+// Get all available rides
+$app->get('/rides/getall', function () {
+
+    $db = new $DbHandler();
+    $rides = $db->getAllRides();
+    echo "here";
+    $rides_output = array();
+
+    for($i = 0; $i < sizeof($rides); $i++) {
+
+        $ride = $rides[$i];
+
+        $rides_output[$i] = array(
+            "id" => $ride['rides_id'],
+            "meetingPlace" => $ride['rides_meetingPlace'],
+            "seats" => $ride['seats'],
+            "departure_time" => $ride['departure_time'],
+            "name" => $ride['user_firstname']
+        );
+    }
+
+    echoRespnse(200, $rides_output);
+});
+
 /**
  * Verifying required params posted or not
  */
