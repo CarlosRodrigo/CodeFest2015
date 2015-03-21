@@ -45,6 +45,39 @@ $app->post('/register', function() use ($app) {
     // check for required params
     verifyRequiredParams(array('name', 'email', 'password'));
 
+    //reading post params
+    $email = $app->request()->post('email');
+    $password = $app->request()->post('password');
+    $firstname = $app->request()->post('firstname');
+    $phone1 = $app->request()->post('phone1');
+    $phone2 = $app->request()->post('phone2');
+    $bio = $app->request()->post('bio');
+    $lastname = $app->request()->post('lastname');
+    $pic = $app->request()->post('pic');
+    $gender = $app->request()->post('gender');
+    $response = array();
+    $db = new DbHandler();
+
+    // check for correct email and password
+    if ($db->createUser($firstname,$email,$password,$phone1,$phone2,$bio,$lastname,$pic,$gender)) {
+        // get the user by email
+        $user = $db->createUser($email);
+
+        if ($user != null) {
+            $response["error"] = false;
+            $response['message'] = "User was created.";
+        } else {
+            // unknown error occurred
+            $response['error'] = true;
+            $response['message'] = "An error occurred. Please try again";
+        }
+    } else {
+        // user credentials are wrong
+        $response['error'] = true;
+        $response['message'] = "User was not created.";
+    }
+
+    echoRespnse("200", $response);
 });
 
 /**
