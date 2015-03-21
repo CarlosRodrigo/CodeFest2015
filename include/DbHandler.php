@@ -48,6 +48,19 @@ class DbHandler {
             return null;
         }
     }
+    
+    public function getAllRides() {
+        $rides_query = "SELECT 
+                    rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname 
+                FROM 
+                    rides, users, mountains 
+                WHERE 
+                    user_id=driver_id AND mountain_id=mountains_id 
+                ORDER BY 
+                    departure_time";                    
+
+        return $this->conn->select($rides_query, array());
+    }
 
 }
  
