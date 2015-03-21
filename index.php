@@ -43,16 +43,16 @@ $app->get('/hello/:name', function ($name) {
  */
 $app->post('/register', function() use ($app) {
     // check for required params
-    verifyRequiredParams(array('name', 'email', 'password'));
+    verifyRequiredParams(array('email', 'password', 'firstname', 'lastname', 'gender'));
 
     //reading post params
     $email = $app->request()->post('email');
     $password = $app->request()->post('password');
     $firstname = $app->request()->post('firstname');
+    $lastname = $app->request()->post('lastname');
     $phone1 = $app->request()->post('phone1');
     $phone2 = $app->request()->post('phone2');
     $bio = $app->request()->post('bio');
-    $lastname = $app->request()->post('lastname');
     $pic = $app->request()->post('pic');
     $gender = $app->request()->post('gender');
     $response = array();
@@ -60,17 +60,10 @@ $app->post('/register', function() use ($app) {
 
     // check for correct email and password
     if ($db->createUser($firstname,$email,$password,$phone1,$phone2,$bio,$lastname,$pic,$gender)) {
-        // get the user by email
-        $user = $db->createUser($email);
 
-        if ($user != null) {
-            $response["error"] = false;
-            $response['message'] = "User was created.";
-        } else {
-            // unknown error occurred
-            $response['error'] = true;
-            $response['message'] = "An error occurred. Please try again";
-        }
+        $response["error"] = false;
+        $response['message'] = "User was created.";
+
     } else {
         // user credentials are wrong
         $response['error'] = true;
@@ -142,6 +135,40 @@ $app->get('/rides/getall', function () {
 
     echoRespnse(200, $rides_output);
 });
+
+/**
+ * User Login
+ * url - /login
+ * method - POST
+ * params - email, password
+ */
+$app->post('/rides', function() use ($app) {
+    verifyRequiredParams(array('mountainsId', 'seats', 'departureTime', 'meetingPlace'));
+
+    $user_id = 2;
+    $mountains_id = $app->request->post('mountainsId');
+    $seats = $app->request->post('seats');
+    $departureTime = $app->request->post('departureTime');
+    $meetingPlace = $app->request->post('meetingPlace');
+
+    $response = array($mountains_id,$seats,$departureTime,$meetingPlace);
+
+    $db = new DbHandler();
+
+    // creating new task
+    // $task_id = $db->createRide($user_id, $mountains_d, $seats, $departureTime, $meetingPlace);
+
+    // if ($task_id != null) {
+    //     $response["error"] = false;
+    //     $response["message"] = "Task created successfully";
+    //     $response["task_id"] = $task_id;
+    // } else {
+    //     $response["error"] = true;
+    //     $response["message"] = "Failed to create task. Please try again";
+    // }
+    echoRespnse(201, $response);
+});
+
 
 /**
  * Verifying required params posted or not

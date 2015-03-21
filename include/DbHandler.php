@@ -21,11 +21,10 @@ class DbHandler {
     public function createUser($firstname,$email,$password,$phone1,$phone2,$bio,$lastname,$pic,$gender) {
         // fetching user by email
         $sql= "INSERT INTO `users` (user_firstname,user_email, user_password, user_phone1,user_phone2,user_bio,user_lastname,user_profilepic,user_gender) VALUES (?,?,?,?,?,?,?,?,?)";
-        $result = $this->conn->insert($sql, array($email));
-        $password_hash = $result[0]['user_password'];
+        $result = $this->conn->insert($sql, array($firstname,$email,$password,$phone1,$phone2,$bio,$lastname,$pic,$gender));
 
         if ($result != null) {
-            return $password_hash == $password;
+            return true;
         } else {
  
             return false;
@@ -70,6 +69,28 @@ class DbHandler {
                     departure_time";                    
 
         return $this->conn->select($rides_query, array());
+    }
+
+    public function createRide($user_id, $mountains_id, $seats, $departureTime, $meetingPlace) {
+        $sql = "INSERT INTO rides(driver_id, mountains_id, rides_seats, rides_meetingPlace, departure_time) VALUES(?,?,?,?,?)";
+        $result = $this->conn->insert($sql, array($user_id, $mountains_id, $seats, $departureTime, $meetingPlace));
+ 
+        if ($result != null) {
+            // task row created
+            // now assign the task to user
+            $ride_id = $this->conn->lastInsert();
+            $res = $this->createUserTask($user_id, $ride_id);
+            if ($res) {
+                // task created successfully
+                return $ride_id;
+            } else {
+                // task failed to create
+                return null;
+            }
+        } else {
+            // task failed to create
+            return null;
+        }
     }
 
 }
