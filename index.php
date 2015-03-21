@@ -131,7 +131,7 @@ $app->get('/rides/getall', function () {
 
         $ride = $rides[$i];
 
-        $rides_output[$i] = array(
+        $rides_output['rides'][$i] = array(
             "id" => $ride['rides_id'],
             "meetingPlace" => $ride['rides_meetingPlace'],
             "seats" => $ride['seats'],
