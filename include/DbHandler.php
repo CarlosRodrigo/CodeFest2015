@@ -109,26 +109,11 @@ class DbHandler {
         return $this->conn->select($rides_query, $args);
     }
 
-    public function createRide($user_id, $mountains_id, $seats, $departureTime, $meetingPlace) {
-        $sql = "INSERT INTO rides(driver_id, mountains_id, rides_seats, rides_meetingPlace, departure_time) VALUES(?,?,?,?,?)";
-        $result = $this->conn->insert($sql, array($user_id, $mountains_id, $seats, $departureTime, $meetingPlace));
+    public function createRide($user_id, $mountain_id, $seats, $meetingPlace, $departureTime) {
+        $sql = "INSERT INTO rides(driver_id, mountain_id, rides_seats, rides_meetingPlace, departure_time) VALUES(?,?,?,?,?)";
+        $result = $this->conn->insert($sql, array($user_id, $mountain_id, $seats, $meetingPlace, $departureTime));
  
-        if ($result != null) {
-            // task row created
-            // now assign the task to user
-            $ride_id = $this->conn->lastInsert();
-            $res = $this->createUserTask($user_id, $ride_id);
-            if ($res) {
-                // task created successfully
-                return $ride_id;
-            } else {
-                // task failed to create
-                return null;
-            }
-        } else {
-            // task failed to create
-            return null;
-        }
+        return $result != null;
     }
 
 }

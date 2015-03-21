@@ -145,29 +145,28 @@ $app->get('/rides/:mountain&:orderby', function ($mountain, $orderby) {
  * params - email, password
  */
 $app->post('/rides', function() use ($app) {
-    verifyRequiredParams(array('mountainsId', 'seats', 'departureTime', 'meetingPlace'));
+    verifyRequiredParams(array('userId', 'mountainId', 'seats', 'departureTime', 'meetingPlace'));
 
-    $user_id = 2;
-    $mountains_id = $app->request->post('mountainsId');
+    $user_id = $app->request->post('userId');
+    $mountain_id = $app->request->post('mountainId');
     $seats = $app->request->post('seats');
     $departureTime = $app->request->post('departureTime');
     $meetingPlace = $app->request->post('meetingPlace');
 
-    $response = array($mountains_id,$seats,$departureTime,$meetingPlace);
+    $response = array();
 
     $db = new DbHandler();
 
-    // creating new task
-    // $task_id = $db->createRide($user_id, $mountains_d, $seats, $departureTime, $meetingPlace);
+    // creating new ride
+    $ride = $db->createRide($user_id, $mountain_id, $seats, $departureTime, $meetingPlace);
 
-    // if ($task_id != null) {
-    //     $response["error"] = false;
-    //     $response["message"] = "Task created successfully";
-    //     $response["task_id"] = $task_id;
-    // } else {
-    //     $response["error"] = true;
-    //     $response["message"] = "Failed to create task. Please try again";
-    // }
+    if ($ride != null) {
+        $response["error"] = false;
+        $response["message"] = "Ride created successfully";
+    } else {
+        $response["error"] = true;
+        $response["message"] = "Failed to create ride. Please try again";
+    }
     echoRespnse(201, $response);
 });
 
