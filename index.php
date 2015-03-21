@@ -113,10 +113,10 @@ $app->post('/login', function() use ($app) {
 
 
 // Get all available rides
-$app->get('/rides/getall', function () {
+$app->get('/rides/:mountain&:orderby', function ($mountain, $orderby) {
 
     $db = new DbHandler();
-    $rides = $db->getAllRides();
+    $rides = $db->getRides($mountain, intval($orderby));  
 
     $rides_output = array();
 
@@ -126,15 +126,16 @@ $app->get('/rides/getall', function () {
 
         $rides_output['rides'][$i] = array(
             "id" => $ride['rides_id'],
-            "meetingPlace" => $ride['rides_meetingPlace'],
+            "name" => $ride['user_firstname'],
             "seats" => $ride['seats'],
             "departure_time" => $ride['departure_time'],
-            "name" => $ride['user_firstname']
+            "meeting_place" => $ride['rides_meetingPlace']
         );
     }
 
-    echoRespnse(200, $rides_output);
+    echoRespnse("200", $rides_output);
 });
+
 
 /**
  * User Login
