@@ -11,6 +11,26 @@ $user_id = null;
 
 $app->get('/hello/:name', function ($name) {
 
+    $dbUserName = 'mjohnst4_admin';
+    $whichPass = 'a';
+    $dbName = 'MJOHNST4_skibum';
+    // $database = new Database($dbUserName,$whichPass,$dbName); 
+    // $sql = 'SELECT * FROM tblLog WHERE pmkLogId = :pmkLogId';
+    // $results = $database->select($sql,array(':pmkLogId' => $name));
+    $database = new Database($dbUserName,$whichPass,$dbName); 
+    $email = "jackb@skibumm.com";
+    $sql = "SELECT user_password FROM users WHERE user_email = ?";
+    $result = $database->select($sql, array($email));
+    print_r($result[0]);
+    // $password_hash = $result[0]['user_password'];
+
+    // if ($result != null) {
+    //     print($password_hash);
+    // } else {
+
+    //     print("false");
+    // }
+
 	echo "Hello, $name";
     
 });
@@ -34,7 +54,35 @@ $app->post('/register', function() use ($app) {
  * params - email, password
  */
 $app->post('/login', function() use ($app) {
-    
+    verifyRequiredParams(array('email', 'password'));
+
+    // reading post params
+    $email = $app->request()->post('email');
+    $password = $app->request()->post('password');
+    $response = array();
+    $db = new DbHandler();
+    // check for correct email and password
+    if ($db->checkLogin($email, $password)) {
+        // get the user by email
+        $user = $db->getUserByEmail($email);
+
+        if ($user != null) {
+            $response["error"] = false;
+            $response['first_name'] = $user['user_firstname'];
+            $response['last_name'] = $user['user_lastname'];
+            $response['email'] = $user['user_email'];
+        } else {
+            // unknown error occurred
+            $response['error'] = true;
+            $response['message'] = "An error occurred. Please try again";
+        }
+    } else {
+        // user credentials are wrong
+        $response['error'] = true;
+        $response['message'] = 'Login failed. Incorrect credentials';
+    }
+
+    echoRespnse("200", $response);
 });
 
 /**
