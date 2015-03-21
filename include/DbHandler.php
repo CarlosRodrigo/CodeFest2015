@@ -71,9 +71,9 @@ class DbHandler {
         } else if ($orderbyValue == 1) {
             $orderby = "departure_time";
         } else if ($orderbyValue == 2) {
-            $orderby = "rides_seats";
+            $orderby = "mountains_name";
         } else {
-            $orderby = "rides_seats";
+            $orderby = "requestsCompensation";
         }
 
         if ($mountain != "") {
@@ -87,20 +87,20 @@ class DbHandler {
 
         if ($mountain_id <= 0) {
             $rides_query = "SELECT 
-                        rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname 
+                        rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname, requestsCompensation
                     FROM 
                         rides, users, mountains 
                     WHERE 
-                        user_id=driver_id AND mountain_id=mountains_id AND rides_seats > 0 AND departure_time > NOW()";                
+                        user_id=driver_id AND mountain_id=mountains_id AND rides_seats > 0 AND departure_time > NOW() ";                
             $args = array();    
         } else {
             // Get rides
             $rides_query = "SELECT 
-                        rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname 
+                        rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname, requestsCompensation
                     FROM 
                         rides, users, mountains 
                     WHERE 
-                        user_id=driver_id AND mountain_id=mountains_id AND rides_seats > 0 AND departure_time > NOW() AND mountains_id=?";
+                        user_id=driver_id AND mountain_id=mountains_id AND rides_seats > 0 AND departure_time > NOW() AND mountains_id=? ";
             $args = array($mountain_id);
         }
 

@@ -129,7 +129,8 @@ $app->get('/rides/:mountain&:orderby', function ($mountain, $orderby) {
             "name" => $ride['user_firstname'],
             "seats" => $ride['seats'],
             "departure_time" => $ride['departure_time'],
-            "meeting_place" => $ride['rides_meetingPlace']
+            "meeting_place" => $ride['rides_meetingPlace'],
+            "requestsCompensation" => $ride['requestsCompensation']
         );
     }
 
