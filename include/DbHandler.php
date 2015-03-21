@@ -58,17 +58,55 @@ class DbHandler {
         }
     }
     
-    public function getAllRides() {
-        $rides_query = "SELECT 
-                    rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname 
-                FROM 
-                    rides, users, mountains 
-                WHERE 
-                    user_id=driver_id AND mountain_id=mountains_id 
-                ORDER BY 
-                    departure_time";                    
+    public function getRides($mountain, $orderbyValue) {
+        // Compensation null or not null
+        // departure time
+        // number of seats
 
-        return $this->conn->select($rides_query, array());
+        $args = array();
+        $orderby = "";
+
+        if ($orderbyValue == 0) {
+            $orderby = "rides_seats";
+        } else if ($orderbyValue == 1) {
+            $orderby = "departure_time";
+        } else if ($orderbyValue == 2) {
+            $orderby = "rides_seats";
+        } else {
+            $orderby = "rides_seats";
+        }
+
+        if ($mountain != "") {
+            $mountain = htmlentities($mountain);
+            $mountain_query = "SELECT mountains_id FROM mountains WHERE mountains_name LIKE ?";
+            $mountains_results = $this->conn->select($mountain_query, array($mountain));
+            $mountain_id = intval($mountains_results[0]["mountains_id"]);
+        } else {
+            $mountains_id = -1;
+        }
+
+        if ($mountain_id <= 0) {
+            $rides_query = "SELECT 
+                        rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname 
+                    FROM 
+                        rides, users, mountains 
+                    WHERE 
+                        user_id=driver_id AND mountain_id=mountains_id AND rides_seats > 0 AND departure_time > NOW()";                
+            $args = array();    
+        } else {
+            // Get rides
+            $rides_query = "SELECT 
+                        rides_id, rides_meetingPlace, rides_seats AS seats, departure_time, user_firstname 
+                    FROM 
+                        rides, users, mountains 
+                    WHERE 
+                        user_id=driver_id AND mountain_id=mountains_id AND rides_seats > 0 AND departure_time > NOW() AND mountains_id=?";
+            $args = array($mountain_id);
+        }
+
+        $rides_query .= " ORDER BY " . $orderby;
+
+        return $this->conn->select($rides_query, $args);
     }
 
     public function createRide($user_id, $mountains_id, $seats, $departureTime, $meetingPlace) {
